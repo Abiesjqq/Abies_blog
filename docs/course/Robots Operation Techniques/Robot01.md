@@ -1,3 +1,95 @@
+??? normal-comment "核心公式"
+
+    **两个坐标系之间的几何关系：**
+
+    $$
+    ^A_B R = \left(\hat{^A X_B}, \hat{^A Y_B}, \hat{^A Z_B}\right)
+    $$
+
+    假设 $\{A\}$ 经过一系列动轴旋转得到 $\{B\}$，则 $^A_B R$ 为这一系列旋转矩阵按顺序相乘。
+
+    $$
+    ^A P = ^A_B R ^B P,\quad
+    \begin{pmatrix}
+    ^A P \\ 1
+    \end{pmatrix}= ^A_B T \begin{pmatrix}
+    ^B P \\ 1
+    \end{pmatrix}
+    $$
+
+    **欧拉角表示：**
+
+    $$
+    R_x(\phi) =
+    \begin{pmatrix}
+    1 & 0 & 0 \\
+    0 & \cos\phi & -\sin\phi \\
+    0 & \sin\phi & \cos\phi
+    \end{pmatrix}
+    $$
+
+    $$
+    R_y(\theta) =
+    \begin{pmatrix}
+    \cos\theta & 0 & \sin\theta \\
+    0 & 1 & 0 \\
+    -\sin\theta & 0 & \cos\theta
+    \end{pmatrix}
+    $$
+
+    $$
+    R_z(\psi) =
+    \begin{pmatrix}
+    \cos\psi & -\sin\psi & 0 \\
+    \sin\psi & \cos\psi & 0 \\
+    0 & 0 & 1
+    \end{pmatrix}
+    $$
+
+    **内旋与外旋对应关系：**
+
+    $$
+    R_{xyz}(\gamma, \beta, \alpha) = R_z(\alpha) R_y(\beta) R_x (\gamma) = R_{z'y'x'}(\alpha, \beta, \gamma)
+    $$
+
+    **欧拉角反解：**
+
+    $$
+    \beta =
+    \operatorname{atan2}
+    \left(
+    -r_{31},
+    \sqrt{r_{11}^2+r_{21}^2}
+    \right)
+    $$
+
+    $$
+    \alpha =
+    \operatorname{atan2}(r_{21},r_{11})
+    $$
+
+    $$
+    \gamma =
+    \operatorname{atan2}(r_{32},r_{33})
+    $$
+
+    **罗德里格斯公式：**
+
+    $$
+    Q' = Q\cos\theta + (K\times Q)\sin\theta + K(K\cdot Q)(1-\cos\theta)
+    $$
+
+    $$
+    R_K(\theta) =
+    I+\sin\theta [K]_\times +(1-\cos\theta)[K]_\times^2
+    $$
+
+    **四元数表示旋转：**
+
+    $$
+    p' = qpq^{-1}
+    $$
+
 ## 坐标系、点和刚体的描述
 
 **坐标系**：这里统一采用空间笛卡尔直角右手坐标系，用大括号表示，如 $\{A\}$。通常用 $\{U\}$ 表示世界坐标系。
@@ -17,13 +109,15 @@ $\{B\}$ 关于 $\{A\}$ 的相对姿态，即 $\{B\}$ 相对于 $\{A\}$ 怎么旋
 
 **_Q：什么是旋转矩阵？_**
 
-旋转矩阵 $^A_B R$ 即用 $\{A\}$ 描述 $\{B\}$ 中三个轴的方向。
+旋转矩阵 $^A_B R$ 表示两坐标系间的相对位置关系，即用 $\{A\}$ 描述 $\{B\}$ 中三个轴的方向。有两种求解方法：
 
-将 $\{B\}$ 的三个单位轴 $\hat{X_B}, \hat{Y_B}, \hat{Z_B}$ 用 $\{A\}$ 的向量表达，按列排列成矩阵，得到：
+1. **单位轴表示**：将 $\{B\}$ 的三个单位轴 $\hat{X_B}, \hat{Y_B}, \hat{Z_B}$ 用 $\{A\}$ 的向量表达，按列排列成矩阵，得到：
 
 $$
 ^A_B R = \left(\hat{^A X_B}, \hat{^A Y_B}, \hat{^A Z_B}\right)
 $$
+
+1. **旋转表示**：假设 $\{A\}$ 经过一系列动轴旋转得到 $\{B\}$，则 $^A_B R$ 为这一系列旋转矩阵按顺序相乘。
 
 旋转矩阵一定是正交矩阵，有：
 
@@ -31,11 +125,17 @@ $$
 R^T R = I, \quad R^{-1} = R^T
 $$
 
+所有三维旋转矩阵构成 $SO(3)$，即：
+
+$$
+SO(3)=\{R\in \mathbb{R}^{3\times 3} | R^T R=I， \det(R) = 1\}
+$$
+
 **_Q：同一个点，怎么在不同坐标系中表达？_**
 
 即，对点 $P$，已知 $^B P$，怎么求 $^A P$？
 
-1. 若两坐标系原点重合，则 $^A P = ^A_B R ^B P$。
+1. 若两坐标系原点重合，则 $^A P = ^A_B R ^B P$。（“坐标系变换方向”与“坐标系中向量的表示的变换方向”互逆。）
 2. 若原点不重合，引入齐次变换矩阵表示仿射变换（齐次坐标原理略）：
 
 $$
@@ -134,12 +234,12 @@ $$
 
 ### 固定角
 
-固定角属于外旋（Extrinsic Rotation），即三次旋转都绕世界坐标系固定轴，用统一旋转矩阵 $R_{xyz}(\gamma, \beta, \alpha)$ 表示。
+固定角属于外旋（Extrinsic Rotation），即三次旋转都绕世界坐标系固定轴，用统一旋转矩阵 $R_{xyz}(\gamma, \beta, \alpha)$ 表示，其中坐标轴不带`'`表示绕世界坐标系的轴依次旋转。
 
 固定角和欧拉角的关系：外旋x-y-z等价于内旋z-y-x
 
 $$
-R_{xyz}(\gamma, \beta, \alpha) = R_z(\alpha) R_y(\beta) R_x (\gamma)
+R_{xyz}(\gamma, \beta, \alpha) = R_z(\alpha) R_y(\beta) R_x (\gamma) = R_{z'y'x'}(\alpha, \beta, \gamma)
 $$
 
 更新姿态矩阵时，旋转与旋转矩阵左右乘：右乘联体左乘基
@@ -219,7 +319,7 @@ $$
 
 下面令单位向量 $K$ 表示旋转轴，角度 $\theta$ 表示旋转角。
 
-**_Q：已知旋转轴、旋转角，怎么得到旋转矩阵？_**
+**_Q：已知旋转轴、旋转角，怎么求旋转矩阵？_**
 
 设向量 $Q$ 绕轴 $K$ 旋转角度 $\theta$，得到 $Q'$。
 
@@ -229,7 +329,41 @@ $$
 Q' = Q\cos\theta + (K\times Q)\sin\theta + K(K\cdot Q)(1-\cos\theta)
 $$
 
+旋转矩阵形式：
+
+$$
+R_K(\theta) =
+I+\sin\theta [K]_\times +(1-\cos\theta)[K]_\times^2
+$$
+
+!!! remarks "叉乘矩阵"
+
+    记向量 $K=(k_x, k_y, k_z)$，则定义其叉乘矩阵为 $[K]_{\times}$ 为对任意向量 $P$ 满足 $[K]_{\times} P = K \times P$ 的矩阵，表示为：
+
+    $$
+    [K]_\times =
+    \begin{pmatrix}
+    0 & -k_z & k_y\\
+    k_z & 0 & -k_x\\
+    -k_y & k_x & 0
+    \end{pmatrix}
+    $$
+
 任意旋转矩阵都能写成 $R_K(\theta)$，右乘联体左乘基仍然成立。但轴角表示仍有特殊点，不方便连续积分。
+
+**_Q：已知旋转矩阵，怎么求旋转轴、旋转角？_**
+
+- 旋转角：根据如下结论，用 $\arccos$ 反解出旋转角。
+
+$$
+\operatorname{tr}(R) = 1 + 2\cos\theta
+$$
+
+- 旋转轴：根据如下结论，用叉乘矩阵和原向量的对应关系反解出旋转轴。
+
+$$
+R-R^T = 2\sin\theta [K]_{\times}
+$$
 
 ## 单位四元数与欧拉参数
 
@@ -250,7 +384,8 @@ $$
 **_Q：四元数有什么性质？_**
 
 - 四元数的共轭为 $q^* = (q_0, -q_1, -q_2, -q_3)$
-- 四元数的逆为其共轭，即 $q^{-1} = q^*$
+- 单位四元数的逆为其共轭，即 $q^{-1} = q^*$；一般地，$qq^* = ||q||^2$
+- 四元数乘积的范数等于范数的乘积，即 $||q_1 q_2||=||q_1||\, ||q_2||$
 
 一个真实旋转对应两个相反四元数，即 $q$ 和 $-q$ 表示同一个姿态。
 
@@ -286,4 +421,3 @@ k_z \sin\frac{\theta}{2}
 $$
 
 单位四元数和旋转矩阵一一对应，具体表示略。
-
