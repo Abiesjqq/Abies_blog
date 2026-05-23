@@ -74,6 +74,8 @@
     - 量子信息基础: 
         - Lec1 信息与信息熵: docs/course/Quantum Information/QI01.md
         - Lec2 电磁波与狄拉克符号: docs/course/Quantum Information/QI02.md
+        - Lec3 量子态计算: docs/course/Quantum Information/QI03.md
+        - Lec4 量子退相干: docs/course/Quantum Information/QI06.md
         - 实验部分:
             - lab2 量子态的描述与量子密钥分发: docs/course/Quantum Information/QI_labs/QI_lab2.md
     - 普通物理学II:
