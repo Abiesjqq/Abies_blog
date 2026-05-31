@@ -16,6 +16,9 @@
         - Lec6 数据库规范化: docs/course/Database System/DB06.md
         - Lec7 存储与文件结构: docs/course/Database System/DB07.md
         - Lec8 索引: docs/course/Database System/DB08.md
+        - Lec9 查询与连接操作: docs/course/Database System/DB09.md
+        - Lec10 代价估计: docs/course/Database System/DB10.md
+        - Lec11 事务: docs/course/Database System/DB11.md
         - JDBC指南: docs/course/Database System/JDBC.md
     - 面向对象程序设计:
         - Lec1 面向对象基础: docs/course/Object-Oriented Programming/oop1.md
@@ -97,6 +100,8 @@
     - 操作机器人技术:
         - Lec1 空间描述与变换: docs/course/Robots Operation Techniques/Robot01.md
         - Lec2 正运动学: docs/course/Robots Operation Techniques/Robot02.md
+        - Lec3 逆运动学: docs/course/Robots Operation Techniques/Robot02.md
+        - Lec4 微分动力学与静力学: docs/course/Robots Operation Techniques/Robot02.md
     - 工程图学:
         - 投影画法: docs/course/Engineering Graphics/EG01.md
         - 标准件: docs/course/Engineering Graphics/EG02.md
