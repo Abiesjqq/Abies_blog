@@ -5,6 +5,8 @@
         - Lec3 Cache: docs/course/Computer Architecture/CA03.md
         - Lec4 虚拟内存: docs/course/Computer Architecture/CA04.md
         - Lec5 指令级并行: docs/course/Computer Architecture/CA05.md
+        - Lec6 数据级并行: docs/course/Computer Architecture/CA06.md
+        - Lec7 线程级并行: docs/course/Computer Architecture/CA07.md
         - 实验部分:
             - lab0 zju git使用备注: docs/course/Computer Architecture/CA_labs/CA_lab0.md
     - 数据库系统:
@@ -19,6 +21,7 @@
         - Lec9 查询与连接操作: docs/course/Database System/DB09.md
         - Lec10 代价估计: docs/course/Database System/DB10.md
         - Lec11 事务: docs/course/Database System/DB11.md
+        - Lec12 锁协议: docs/course/Database System/DB12.md
         - JDBC指南: docs/course/Database System/JDBC.md
     - 面向对象程序设计:
         - Lec1 面向对象基础: docs/course/Object-Oriented Programming/oop1.md
@@ -79,6 +82,8 @@
         - Lec2 电磁波与狄拉克符号: docs/course/Quantum Information/QI02.md
         - Lec3 量子态计算: docs/course/Quantum Information/QI03.md
         - Lec4 量子退相干: docs/course/Quantum Information/QI06.md
+        - Lec5 量子纠错（待完成）: docs/course/Quantum Information/QI07.md
+        - Lec6 容错量子计算: docs/course/Quantum Information/QI08.md
         - 实验部分:
             - lab2 量子态的描述与量子密钥分发: docs/course/Quantum Information/QI_labs/QI_lab2.md
     - 普通物理学II:
@@ -100,8 +105,9 @@
     - 操作机器人技术:
         - Lec1 空间描述与变换: docs/course/Robots Operation Techniques/Robot01.md
         - Lec2 正运动学: docs/course/Robots Operation Techniques/Robot02.md
-        - Lec3 逆运动学: docs/course/Robots Operation Techniques/Robot02.md
-        - Lec4 微分动力学与静力学: docs/course/Robots Operation Techniques/Robot02.md
+        - Lec3 逆运动学: docs/course/Robots Operation Techniques/Robot03.md
+        - Lec4 微分动力学与静力学: docs/course/Robots Operation Techniques/Robot04.md
+        - Lec5 动力学: docs/course/Robots Operation Techniques/Robot05.md
     - 工程图学:
         - 投影画法: docs/course/Engineering Graphics/EG01.md
         - 标准件: docs/course/Engineering Graphics/EG02.md
