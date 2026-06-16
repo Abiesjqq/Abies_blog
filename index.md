@@ -107,7 +107,8 @@
         - Lec2 正运动学: docs/course/Robots Operation Techniques/Robot02.md
         - Lec3 逆运动学: docs/course/Robots Operation Techniques/Robot03.md
         - Lec4 微分动力学与静力学: docs/course/Robots Operation Techniques/Robot04.md
-        - Lec5 动力学: docs/course/Robots Operation Techniques/Robot05.md
+        - Lec5 轨迹规划: docs/course/Robots Operation Techniques/Robot05.md
+        - Lec6 动力学: docs/course/Robots Operation Techniques/Robot06.md
     - 工程图学:
         - 投影画法: docs/course/Engineering Graphics/EG01.md
         - 标准件: docs/course/Engineering Graphics/EG02.md
