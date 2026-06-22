@@ -22,6 +22,7 @@
         - Lec10 代价估计: docs/course/Database System/DB10.md
         - Lec11 事务: docs/course/Database System/DB11.md
         - Lec12 锁协议: docs/course/Database System/DB12.md
+        - Lec13 日志与恢复: docs/course/Database System/DB13.md
         - JDBC指南: docs/course/Database System/JDBC.md
     - 面向对象程序设计:
         - Lec1 面向对象基础: docs/course/Object-Oriented Programming/oop1.md
