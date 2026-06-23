@@ -12,11 +12,19 @@ import leafClusterLeft from "./assets/leaf-cluster-left.png";
 import leafClusterRight from "./assets/leaf-cluster-right.png";
 
 const ADMONITION_META = {
-  remarks: { label: "补充内容", className: "remarks" },
-  examples: { label: "示例", className: "examples" },
-  warning: { label: "警告", className: "warning" },
-  "normal-comment": { label: "备注", className: "normal-comment" }
+  remarks: { label: "补充内容", className: "remarks", icon: "◌" },
+  examples: { label: "示例", className: "examples", icon: "◇" },
+  warning: { label: "警告", className: "warning", icon: "△" },
+  "normal-comment": { label: "备注", className: "normal-comment", icon: "·" }
 };
+
+function ChevronIcon({ className = "" }) {
+  return (
+    <svg aria-hidden="true" className={className} viewBox="0 0 12 12">
+      <path d="M2.5 2.35L8.75 6L2.5 9.65" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.15" />
+    </svg>
+  );
+}
 
 function flattenDocs(nodes, output = []) {
   for (const node of nodes) {
@@ -126,12 +134,51 @@ function expandPath(nodes, targetPath, state = {}) {
   return false;
 }
 
-function renderMarkdownBlock(content, key) {
+function resolveImageSource(docPath, source) {
+  if (!source) {
+    return "";
+  }
+
+  if (/^(?:[a-z]+:)?\/\//i.test(source) || source.startsWith("data:") || source.startsWith("#")) {
+    return source;
+  }
+
+  const normalizedBase = import.meta.env.BASE_URL || "/";
+  const trimmedBase = normalizedBase.endsWith("/") ? normalizedBase.slice(0, -1) : normalizedBase;
+
+  if (source.startsWith("/")) {
+    return `${trimmedBase}${source}`;
+  }
+
+  const segments = docPath.split("/").slice(0, -1);
+  const parts = source.split("/");
+
+  for (const part of parts) {
+    if (!part || part === ".") {
+      continue;
+    }
+    if (part === "..") {
+      segments.pop();
+      continue;
+    }
+    segments.push(part);
+  }
+
+  return `${trimmedBase}/${segments.join("/")}`;
+}
+
+function renderMarkdownBlock(content, key, docPath = "") {
   const normalizedContent = normalizeMathDelimiters(content);
 
   return (
     <ReactMarkdown
       key={key}
+      components={{
+        img({ src = "", alt = "", title = "" }) {
+          const resolvedSrc = resolveImageSource(docPath, src);
+          return <img alt={alt} loading="lazy" src={resolvedSrc} title={title || undefined} />;
+        }
+      }}
       rehypePlugins={[
         [
           rehypeHighlight,
@@ -225,17 +272,18 @@ function parseArticleBlocks(markdown) {
   return parseBlocks(markdown.replace(/\r\n/g, "\n").split("\n")).blocks;
 }
 
-function renderBlocks(blocks, keyPrefix = "block") {
+function renderBlocks(blocks, docPath, keyPrefix = "block") {
   return blocks.map((block, index) => {
     if (block.type === "markdown") {
-      return renderMarkdownBlock(block.content, `${keyPrefix}-markdown-${index}`);
+      return renderMarkdownBlock(block.content, `${keyPrefix}-markdown-${index}`, docPath);
     }
 
     const meta = ADMONITION_META[block.kind] ?? {
       label: block.kind,
-      className: "remarks"
+      className: "remarks",
+      icon: "◌"
     };
-    const title = block.title || meta.label;
+    const title = block.title?.trim() || "";
 
     return (
       <details
@@ -244,10 +292,13 @@ function renderBlocks(blocks, keyPrefix = "block") {
         open={block.open}
       >
         <summary>
-          <span className="admonition-label">{meta.label}</span>
-          <span className="admonition-title">{title}</span>
+          <ChevronIcon className="admonition-toggle-indicator" />
+          <span aria-hidden="true" className={`admonition-kind-icon admonition-kind-${meta.className}`}>
+            {meta.icon}
+          </span>
+          {title ? <span className="admonition-title">{title}</span> : null}
         </summary>
-        <div className="admonition-body">{renderBlocks(block.children, `${keyPrefix}-${index}`)}</div>
+        <div className="admonition-body">{renderBlocks(block.children, docPath, `${keyPrefix}-${index}`)}</div>
       </details>
     );
   });
@@ -273,7 +324,9 @@ function SidebarNode({ node, currentPath, openState, onToggle, onSelect, level }
   return (
     <li className="nav-group">
       <button className="nav-group-toggle" onClick={() => onToggle(node.id)} type="button">
-        <span className="nav-group-indicator">{isOpen ? "−" : "+"}</span>
+        <span aria-hidden="true" className="nav-group-indicator">
+          {isOpen ? "−" : "+"}
+        </span>
         <span className={`nav-level nav-level-${level}`}>{node.title}</span>
       </button>
       {isOpen ? (
@@ -590,7 +643,7 @@ export default function App() {
                 <article className="article-card">
                   {viewState.currentPath ? (
                     articleExists ? (
-                      renderBlocks(articleBlocks)
+                      renderBlocks(articleBlocks, viewState.currentPath)
                     ) : (
                       <NotFoundArticle currentPath={viewState.currentPath} />
                     )
@@ -603,7 +656,6 @@ export default function App() {
               {viewState.currentPath && articleExists ? (
                 <aside className="toc-dock">
                   <div className="toc-card">
-                    <h2>页内导航</h2>
                     {headings.length ? (
                       <ul className="toc-list">
                         {headings.map((heading) => (

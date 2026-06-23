@@ -84,6 +84,58 @@ function collectDocPaths(nodes, output = new Set()) {
   return output;
 }
 
+function extractReferencedAssetPaths(docPath, markdown) {
+  const assetPaths = new Set();
+  const patterns = [
+    /!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
+    /<img[^>]+src=["']([^"']+)["'][^>]*>/gi
+  ];
+
+  for (const pattern of patterns) {
+    let match;
+    while ((match = pattern.exec(markdown)) !== null) {
+      const candidate = match[1]?.trim();
+      if (!candidate || /^(?:[a-z]+:)?\/\//i.test(candidate) || candidate.startsWith("data:") || candidate.startsWith("#")) {
+        continue;
+      }
+      assetPaths.add(resolveDocRelativePath(docPath, candidate));
+    }
+  }
+
+  return assetPaths;
+}
+
+function resolveDocRelativePath(docPath, assetPath) {
+  const normalizedAssetPath = normalizeContentPath(assetPath);
+  if (!normalizedAssetPath || assetPath.startsWith("/")) {
+    return normalizedAssetPath;
+  }
+
+  const docDirectory = path.posix.dirname(normalizeContentPath(docPath));
+  return normalizeContentPath(path.posix.join(docDirectory, normalizedAssetPath));
+}
+
+function collectStaticAssets(rootDir, tree) {
+  const assets = new Set();
+
+  for (const docPath of collectDocPaths(tree)) {
+    const absolutePath = path.join(rootDir, docPath);
+    if (!fs.existsSync(absolutePath)) {
+      continue;
+    }
+
+    const markdown = fs.readFileSync(absolutePath, "utf8");
+    for (const assetPath of extractReferencedAssetPaths(docPath, markdown)) {
+      const absoluteAssetPath = path.join(rootDir, assetPath);
+      if (fs.existsSync(absoluteAssetPath) && fs.statSync(absoluteAssetPath).isFile()) {
+        assets.add(assetPath);
+      }
+    }
+  }
+
+  return assets;
+}
+
 function createContentModule(rootDir) {
   const indexPath = path.join(rootDir, "index.md");
   const indexSource = fs.existsSync(indexPath)
@@ -111,9 +163,16 @@ export const missingDocs = ${JSON.stringify(missing, null, 2)};
 
 function blogContentPlugin() {
   const rootDir = process.cwd();
+  let referencedAssets = new Set();
 
   return {
     name: "blog-content-plugin",
+    buildStart() {
+      const indexPath = path.join(rootDir, "index.md");
+      const indexSource = fs.existsSync(indexPath) ? fs.readFileSync(indexPath, "utf8") : "";
+      const tree = parseIndexTree(indexSource);
+      referencedAssets = collectStaticAssets(rootDir, tree);
+    },
     resolveId(id) {
       if (id === VIRTUAL_MODULE_ID) {
         return RESOLVED_VIRTUAL_MODULE_ID;
@@ -125,6 +184,20 @@ function blogContentPlugin() {
         return createContentModule(rootDir);
       }
       return null;
+    },
+    generateBundle() {
+      for (const assetPath of referencedAssets) {
+        const absolutePath = path.join(rootDir, assetPath);
+        if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
+          continue;
+        }
+
+        this.emitFile({
+          type: "asset",
+          fileName: assetPath,
+          source: fs.readFileSync(absolutePath)
+        });
+      }
     },
     configureServer(server) {
       const indexPath = path.join(rootDir, "index.md");
