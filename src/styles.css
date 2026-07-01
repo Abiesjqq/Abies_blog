@@ -277,6 +277,29 @@ button {
   border-right: 1px solid var(--border-soft);
   background: transparent;
   padding-right: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.sidebar:hover {
+  scrollbar-color: rgba(103, 95, 121, 0.48) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5.2px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+
+.sidebar:hover::-webkit-scrollbar-thumb {
+  background: rgba(103, 95, 121, 0.48);
 }
 
 .sidebar-trigger {
@@ -443,6 +466,10 @@ button {
   padding-left: 16px;
 }
 
+.toc-level-4 {
+  padding-left: 24px;
+}
+
 .toc-level a:hover {
   color: var(--accent);
   text-decoration: none;
@@ -517,6 +544,13 @@ button {
   margin-top: 0;
 }
 
+.article-card h1,
+.article-card h2,
+.article-card h3,
+.article-card h4 {
+  scroll-margin-top: 112px;
+}
+
 .article-card p,
 .article-card li,
 .article-card blockquote,
@@ -575,6 +609,8 @@ button {
 
 .article-card code {
   font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
 }
 
 .article-card pre code {
@@ -591,6 +627,13 @@ button {
   background: #ffffff;
   border: 1px solid var(--border-soft);
   font-size: 0.86em;
+}
+
+.article-card .markdown-doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  margin: 1rem 0;
 }
 
 .article-card .hljs-comment,

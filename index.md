@@ -2,6 +2,7 @@
     - 计算机体系结构:
         - Lec1 绪论: docs/course/Computer Architecture/CA01.md
         - Lec2 流水线: docs/course/Computer Architecture/CA02.md
+        - Lab2 异常与中断: docs/course/Computer Architecture/CA_Lab02.md
         - Lec3 Cache: docs/course/Computer Architecture/CA03.md
         - Lec4 虚拟内存: docs/course/Computer Architecture/CA04.md
         - Lec5 指令级并行: docs/course/Computer Architecture/CA05.md
@@ -18,8 +19,8 @@
         - Lec6 数据库规范化: docs/course/Database System/DB06.md
         - Lec7 存储与文件结构: docs/course/Database System/DB07.md
         - Lec8 索引: docs/course/Database System/DB08.md
-        - Lec9 查询与连接操作: docs/course/Database System/DB09.md
-        - Lec10 代价估计: docs/course/Database System/DB10.md
+        - Lec9 查询, 排序, 连接: docs/course/Database System/DB09.md
+        - Lec10 查询代价估计: docs/course/Database System/DB10.md
         - Lec11 事务: docs/course/Database System/DB11.md
         - Lec12 锁协议: docs/course/Database System/DB12.md
         - Lec13 日志与恢复: docs/course/Database System/DB13.md

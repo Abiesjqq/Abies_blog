@@ -76,7 +76,7 @@ function slugify(text) {
 function extractHeadings(markdown) {
   return markdown
     .split(/\r?\n/)
-    .map((line) => line.match(/^(#{1,3})\s+(.+?)\s*$/))
+    .map((line) => line.match(/^(#{1,4})\s+(.+?)\s*$/))
     .filter(Boolean)
     .map((match) => ({
       level: match[1].length,
@@ -134,6 +134,47 @@ function expandPath(nodes, targetPath, state = {}) {
   return false;
 }
 
+function decodeLocalSource(source) {
+  if (!source) {
+    return "";
+  }
+
+  try {
+    return decodeURI(source);
+  } catch {
+    return source;
+  }
+}
+
+function resolveDocRelativePath(docPath, source) {
+  const normalizedSource = decodeLocalSource(source);
+  const segments = docPath.split("/").slice(0, -1);
+  const parts = normalizedSource.split("/");
+
+  for (const part of parts) {
+    if (!part || part === ".") {
+      continue;
+    }
+    if (part === "..") {
+      segments.pop();
+      continue;
+    }
+    segments.push(part);
+  }
+
+  return segments.join("/");
+}
+
+function createDocHref(targetPath) {
+  const section = findTopLevelNodeByPath(navTree, targetPath);
+  const url = new URL(window.location.href);
+  url.searchParams.set("doc", targetPath);
+  if (section?.id) {
+    url.searchParams.set("section", section.id);
+  }
+  return `${url.pathname}${url.search}`;
+}
+
 function resolveImageSource(docPath, source) {
   if (!source) {
     return "";
@@ -150,21 +191,7 @@ function resolveImageSource(docPath, source) {
     return `${trimmedBase}${source}`;
   }
 
-  const segments = docPath.split("/").slice(0, -1);
-  const parts = source.split("/");
-
-  for (const part of parts) {
-    if (!part || part === ".") {
-      continue;
-    }
-    if (part === "..") {
-      segments.pop();
-      continue;
-    }
-    segments.push(part);
-  }
-
-  return `${trimmedBase}/${segments.join("/")}`;
+  return `${trimmedBase}/${resolveDocRelativePath(docPath, source)}`;
 }
 
 function renderMarkdownBlock(content, key, docPath = "") {
@@ -175,6 +202,15 @@ function renderMarkdownBlock(content, key, docPath = "") {
       key={key}
       components={{
         img({ src = "", alt = "", title = "" }) {
+          const resolvedDocPath = src.toLowerCase().endsWith(".md") ? resolveDocRelativePath(docPath, src) : "";
+          if (resolvedDocPath && isKnownPath(navTree, resolvedDocPath)) {
+            return (
+              <a className="markdown-doc-link" href={createDocHref(resolvedDocPath)} title={title || alt || resolvedDocPath}>
+                {alt || findNodeTitleByPath(navTree, resolvedDocPath) || resolvedDocPath}
+              </a>
+            );
+          }
+
           const resolvedSrc = resolveImageSource(docPath, src);
           return <img alt={alt} loading="lazy" src={resolvedSrc} title={title || undefined} />;
         }
@@ -665,7 +701,7 @@ export default function App() {
                         ))}
                       </ul>
                     ) : (
-                      <p className="toc-empty">当前页面没有 H1-H3 标题。</p>
+                      <p className="toc-empty">当前页面没有 H1-H4 标题。</p>
                     )}
                   </div>
                 </aside>
